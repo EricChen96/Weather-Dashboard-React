@@ -1,11 +1,20 @@
 import { useState, useEffect } from "react";
 import SideBar from "../components/Sidebar";
 import TitleBanner from "../components/TitleBanner";
+import MainWeatherDisplay from "../components/MainWeatherDisplay";
+import FiveDayForcast from "../components/FiveDayForcast";
 
 function WeatherPage(props) {
     const [city, setCity] = useState();
     const [uvIndex, setUVIndex] = useState();
     const [date, setDate] = useState();
+    const [fiveDayForcast, setFiveDayForcast] = useState([{
+        date: "",
+        iconURL: "",
+        temperature: "",
+        humidity: "",
+
+    }]);
     var apiKey = "9533f3cb4c01176c409c57b70db75f3f";
     var cityLatitude, cityLongitude;
     const [citiesButtons, setCitiesButtons] = useState([]);
@@ -14,55 +23,83 @@ function WeatherPage(props) {
     const searchCity = (cityRequest) => {
         var queryUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + cityRequest + "&units=imperial&appid="
             + apiKey;
-        fetch(queryUrl).then(res => res.json()).then(data => {
-            setCity(data);
-            setDate(new Date(data.dt * 1000).toLocaleDateString("en-US"));
-            console.log(city);
-            cityLongitude = data.coord.lon;
-            cityLatitude = data.coord.lat;
-            searchCityUVIndex(cityLongitude, cityLatitude);
-            if (!citiesButtons.includes(data.name)) {
-                citiesButtons.unshift(data.name);
-                // createButtons();
-                localStorage.setItem("cities", JSON.stringify(citiesButtons));
-            }
-            lastSearched = data.name;
-            localStorage.setItem("lastSearched", lastSearched);
-        }).catch((error)=> {
-            console.log(error);
-
-        })
+        fetch(queryUrl)
+            .then(res => {
+                if (!res.ok) {
+                    return city;
+                }
+                return res.json()
+            })
+            .then(data => {
+                setCity(data);
+                setDate(new Date(data.dt * 1000).toLocaleDateString("en-US"));
+                cityLongitude = data.coord.lon;
+                cityLatitude = data.coord.lat;
+                searchCityUVIndex(cityLongitude, cityLatitude);
+                searchFiveDayForcast(data.name)
+                if (!citiesButtons.includes(data.name)) {
+                    citiesButtons.unshift(data.name);
+                    // createButtons();
+                    localStorage.setItem("cities", JSON.stringify(citiesButtons));
+                }
+                lastSearched = data.name;
+                localStorage.setItem("lastSearched", lastSearched);
+            }).catch((error) => {
+                console.log(error);
+            })
     }
+
+
 
     const searchCityUVIndex = (cityLongitude, cityLatitude) => {
         var IVIndexQueryUrl = "https://api.openweathermap.org/data/2.5/uvi?lat=" + cityLatitude + "&lon=" + cityLongitude + "&units=imperial&appid=" + apiKey;
-        fetch(IVIndexQueryUrl).then((res) => res.json()).then((data) => {
-            setUVIndex(parseInt(data.value))
-            setUVColor();
-        })
+        fetch(IVIndexQueryUrl)
+            .then((res) => res.json())
+            .then((data) => {
+                setUVIndex(parseInt(data.value))
+                setUVColor();
+            })
     }
 
     const setUVColor = () => {
-        if(uvIndex>= 11) {
-            return {backgroundColor: "purple"};
+        if (uvIndex >= 11) {
+            return { backgroundColor: "purple" };
         }
         else if (uvIndex >= 8) {
-            return {backgroundColor: "red"};
+            return { backgroundColor: "red" };
         }
         else if (uvIndex >= 6) {
-            return {backgroundColor: "orange"};
+            return { backgroundColor: "orange" };
         }
         else if (uvIndex >= 3) {
-            return {backgroundColor: "yellow"};
+            return { backgroundColor: "yellow" };
         }
         else if (uvIndex >= 0) {
-            return {backgroundColor: "green"};
+            return { backgroundColor: "green" };
         }
     }
 
+    function searchFiveDayForcast(city) {
+        var queryUrl = "https://api.openweathermap.org/data/2.5/forecast?q=" + city + "&units=imperial&appid=" + apiKey;
+        fetch(queryUrl)
+            .then(res => res.json())
+            .then(data => {
+                console.log(data)
+                let fiveDayForcastHolder = [];
+                for (var dateCount = 0; dateCount < 5; dateCount++) {
+                    let dailyForcast = {};
+                    dailyForcast.date = data.list[dateCount * 8].dt_txt.substring(0, 10);
+                    dailyForcast.iconUrl = "https://openweathermap.org/img/wn/" + data.list[dateCount * 8].weather[0].icon + ".png";
+                    dailyForcast.temperature = "Temp: " + data.list[dateCount * 8].main.temp + "°";
+                    dailyForcast.humidity = "Humidity: " + data.list[dateCount * 8].main.humidity + "%";
+                    fiveDayForcastHolder.push(dailyForcast);
+                }
+                console.log(fiveDayForcastHolder);
+                setFiveDayForcast(fiveDayForcastHolder);
+            })
+    }
     useEffect(() => {
         searchCity("San Diego");
-        console.log(city);
     }, [])
 
 
@@ -77,54 +114,8 @@ function WeatherPage(props) {
                 <div className="col-md-8">
                     {city !== undefined &&
                         <div>
-                            <div class="row">
-                                <div class="card-body">
-                                    <div class="main-city-name-date" >{`${city.name} (${date})`}</div>
-                                    <img class="main-icon" src={`https://openweathermap.org/img/wn/${city.weather[0].icon}@2x.png`}></img>
-                                    <div class="main-display">Temperature: {`${city.main.temp} °`}<span class="main-temperature"></span></div>
-                                    <div class="main-display">Humidity: {`${city.main.humidity} %`}<span class="main-humidity"></span></div>
-                                    <div class="main-display">Wind Speed: {`${city.wind.speed} MPH`} <span class="main-windspeed"></span></div>
-                                    <div class="main-display">UV Index: <span style={setUVColor()} class="border rounded-pill main-UV-Index">{uvIndex}</span></div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="card-body">
-                                    <h2 class="five-day-forcast-title">5-Day Forcast</h2>
-                                    <div class="row five-day-forcast-body">
-                                        <div class="forcast-container">
-                                            <div class="date-forcast-0"></div>
-                                            <img class="icon-forcast-0"></img>
-                                            <div class="temperature-forcast-0"></div>
-                                            <div class="humidity-forcast-0"></div>
-                                        </div>
-                                        <div class="forcast-container">
-                                            <div class="date-forcast-1"></div>
-                                            <img class="icon-forcast-1"></img>
-                                            <div class="temperature-forcast-1"></div>
-                                            <div class="humidity-forcast-1"></div>
-                                        </div>
-                                        <div class="forcast-container">
-                                            <div class="date-forcast-2"></div>
-                                            <img class="icon-forcast-2"></img>
-                                            <div class="temperature-forcast-2"></div>
-                                            <div class="humidity-forcast-2"></div>
-                                        </div>
-                                        <div class="forcast-container">
-                                            <div class="date-forcast-3"></div>
-                                            <img class="icon-forcast-3"></img>
-                                            <div class="temperature-forcast-3"></div>
-                                            <div class="humidity-forcast-3"></div>
-                                        </div>
-                                        <div class="forcast-container">
-                                            <div class="date-forcast-4"></div>
-                                            <img class="icon-forcast-4"></img>
-                                            <div class="temperature-forcast-4"></div>
-                                            <div class="humidity-forcast-4"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
+                            <MainWeatherDisplay city={city} date={date} setUVColor={setUVColor} uvIndex={uvIndex}></MainWeatherDisplay>
+                            <FiveDayForcast fiveDayForcast={fiveDayForcast}></FiveDayForcast>
                         </div>
                     }
 
