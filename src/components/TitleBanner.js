@@ -1,8 +1,8 @@
 function TitleBanner() {
     return (
-        <nav class="navbar navbar-dark bg-dark ">
-            <div class="container-fluid">
-                <a class="navbar-brand " href="./index.html">Weather Dashboard</a>
+        <nav class="navbar navbar-dark bg-dark" >
+            <div class="container-fluid" >
+                <a class="navbar-brand " style={{margin:"auto"}} href="/">Weather Dashboard</a>
             </div>
         </nav>
     )

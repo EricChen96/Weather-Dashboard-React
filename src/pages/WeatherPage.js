@@ -39,7 +39,6 @@ function WeatherPage(props) {
                 searchFiveDayForcast(data.name)
                 if (!citiesButtons.includes(data.name)) {
                     citiesButtons.unshift(data.name);
-                    // createButtons();
                     localStorage.setItem("cities", JSON.stringify(citiesButtons));
                 }
                 lastSearched = data.name;
@@ -49,7 +48,15 @@ function WeatherPage(props) {
             })
     }
 
-
+    const getCitySearchHistory = () => {
+        var storedCitiesButtons = JSON.parse(localStorage.getItem("cities"));
+        if (storedCitiesButtons !== null) {
+            setCitiesButtons(storedCitiesButtons);
+        }
+        lastSearched = localStorage.getItem("lastSearched");
+        searchCity(lastSearched);
+        searchFiveDayForcast(lastSearched);
+    }
 
     const searchCityUVIndex = (cityLongitude, cityLatitude) => {
         var IVIndexQueryUrl = "https://api.openweathermap.org/data/2.5/uvi?lat=" + cityLatitude + "&lon=" + cityLongitude + "&units=imperial&appid=" + apiKey;
@@ -99,17 +106,15 @@ function WeatherPage(props) {
             })
     }
     useEffect(() => {
-        searchCity("San Diego");
+        getCitySearchHistory();
     }, [])
 
-
-
     return (
-        <div>
+        <div style={{backgroundColor: "#0099ff"}}>
             <TitleBanner></TitleBanner>
             <div className="row">
                 <div className="col-md-4">
-                    <SideBar searchCity={searchCity}></SideBar>
+                    <SideBar searchCity={searchCity} citiesButtons={citiesButtons}></SideBar>
                 </div>
                 <div className="col-md-8">
                     {city !== undefined &&

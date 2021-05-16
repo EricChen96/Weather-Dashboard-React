@@ -1,4 +1,4 @@
-import {useRef} from "react";
+import { useRef } from "react";
 
 function SideBar(props) {
     const cityInput = useRef("");
@@ -10,8 +10,8 @@ function SideBar(props) {
 
     return (
         <div>
-            <form  onSubmit={handleSubmit}>
-                <label for="cities-search-input">Search Term</label>
+            <form onSubmit={handleSubmit}>
+                <label for="cities-search-input">Search City</label>
                 <div className="row">
                     <div className="col-md-8">
                         <input type="text" ref={cityInput} className="form-control cities-search-input" placeholder="New York, Toronto..." />
@@ -21,11 +21,9 @@ function SideBar(props) {
                     </div>
                 </div>
                 <div className="cities-buttons-holder">
-                    {props.cityButtons > 0 && 
-                        <div>
-
-                        </div>
-                    }
+                    {props.citiesButtons.map(city => (
+                        <button className="btn btn-primary col-12 mx-auto mt-2 cities-button" onClick={() => props.searchCity(city)}>{city}</button>
+                    ))}
                 </div>
             </form>
         </div>
