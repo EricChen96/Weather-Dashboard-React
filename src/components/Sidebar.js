@@ -10,7 +10,7 @@ function SideBar(props) {
 
     return (
         <div>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} style={{marginLeft: "5px"}}>
                 <label for="cities-search-input">Search City</label>
                 <div className="row">
                     <div className="col-md-8">

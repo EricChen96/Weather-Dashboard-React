@@ -13,7 +13,6 @@ function WeatherPage(props) {
         iconURL: "",
         temperature: "",
         humidity: "",
-
     }]);
     var apiKey = "9533f3cb4c01176c409c57b70db75f3f";
     var cityLatitude, cityLongitude;
@@ -91,7 +90,6 @@ function WeatherPage(props) {
         fetch(queryUrl)
             .then(res => res.json())
             .then(data => {
-                console.log(data)
                 let fiveDayForcastHolder = [];
                 for (var dateCount = 0; dateCount < 5; dateCount++) {
                     let dailyForcast = {};
@@ -101,7 +99,6 @@ function WeatherPage(props) {
                     dailyForcast.humidity = "Humidity: " + data.list[dateCount * 8].main.humidity + "%";
                     fiveDayForcastHolder.push(dailyForcast);
                 }
-                console.log(fiveDayForcastHolder);
                 setFiveDayForcast(fiveDayForcastHolder);
             })
     }
@@ -109,14 +106,15 @@ function WeatherPage(props) {
         getCitySearchHistory();
     }, [])
 
+
     return (
-        <div style={{backgroundColor: "#0099ff"}}>
+        <div >
             <TitleBanner></TitleBanner>
             <div className="row">
-                <div className="col-md-4">
+                <div className="col-md-4" style={{ backgroundColor: "rgb(238, 232, 232)" }}>
                     <SideBar searchCity={searchCity} citiesButtons={citiesButtons}></SideBar>
                 </div>
-                <div className="col-md-8">
+                <div className="col-md-8" style={{ backgroundColor: "#0099ff" }}>
                     {city !== undefined &&
                         <div>
                             <MainWeatherDisplay city={city} date={date} setUVColor={setUVColor} uvIndex={uvIndex}></MainWeatherDisplay>
