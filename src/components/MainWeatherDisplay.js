@@ -9,7 +9,7 @@ function MainWeatherDisplay(props) {
                 <div className="main-display">UV Index: <span style={props.setUVColor()} className="border rounded-pill main-UV-Index">{props.uvIndex}</span></div>
             </div>
             <div className="col-md-4">
-                <img className="main-icon" style={{ width: "50%", height: "100%" }} src={`https://openweathermap.org/img/wn/${props.city.weather[0].icon}@2x.png`}></img>
+                <img alt={props.city.name} className="main-icon" style={{ width: "50%", height: "100%" }} src={`https://openweathermap.org/img/wn/${props.city.weather[0].icon}@2x.png`}></img>
             </div>
         </div>
     )

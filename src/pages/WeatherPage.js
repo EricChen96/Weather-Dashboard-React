@@ -37,8 +37,7 @@ function WeatherPage(props) {
                 searchCityUVIndex(cityLongitude, cityLatitude);
                 searchFiveDayForcast(data.name)
                 if (!citiesButtons.includes(data.name)) {
-                    citiesButtons.unshift(data.name);
-                    localStorage.setItem("cities", JSON.stringify(citiesButtons));
+                    setCitiesButtons([data.name, ...citiesButtons]);
                 }
                 lastSearched = data.name;
                 localStorage.setItem("lastSearched", lastSearched);
@@ -53,8 +52,8 @@ function WeatherPage(props) {
             setCitiesButtons(storedCitiesButtons);
         }
         lastSearched = localStorage.getItem("lastSearched");
-        searchCity(lastSearched);
-        searchFiveDayForcast(lastSearched);
+        // searchCity(lastSearched);
+        // searchFiveDayForcast(lastSearched);
     }
 
     const searchCityUVIndex = (cityLongitude, cityLatitude) => {
@@ -102,10 +101,15 @@ function WeatherPage(props) {
                 setFiveDayForcast(fiveDayForcastHolder);
             })
     }
+
     useEffect(() => {
         getCitySearchHistory();
     }, [])
 
+    useEffect(() => {
+        console.log(citiesButtons);
+        localStorage.setItem("cities", JSON.stringify(citiesButtons));
+    }, [citiesButtons])
 
     return (
         <div >
