@@ -16,8 +16,14 @@ function WeatherPage(props) {
     }]);
     var apiKey = "9533f3cb4c01176c409c57b70db75f3f";
     var cityLatitude, cityLongitude;
-    const [citiesButtons, setCitiesButtons] = useState([]);
-    var lastSearched;
+    const [citiesButtons, setCitiesButtons] = useState(() => {
+        const stickyCitiesHistory = localStorage.getItem("cities");
+        return stickyCitiesHistory !== null ? JSON.parse(stickyCitiesHistory) : []
+    });
+    const [lastSearched, setLastSearched] = useState(() => {
+        const stickyLastSearchedCity = localStorage.getItem("lastSearched");
+        return stickyLastSearchedCity !== null ? stickyLastSearchedCity : "San Diego"
+    });
 
     const searchCity = (cityRequest) => {
         var queryUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + cityRequest + "&units=imperial&appid="
@@ -39,21 +45,15 @@ function WeatherPage(props) {
                 if (!citiesButtons.includes(data.name)) {
                     setCitiesButtons([data.name, ...citiesButtons]);
                 }
-                lastSearched = data.name;
-                localStorage.setItem("lastSearched", lastSearched);
+                setLastSearched(data.name);
             }).catch((error) => {
                 console.log(error);
             })
     }
 
     const getCitySearchHistory = () => {
-        var storedCitiesButtons = JSON.parse(localStorage.getItem("cities"));
-        if (storedCitiesButtons !== null) {
-            setCitiesButtons(storedCitiesButtons);
-        }
-        lastSearched = localStorage.getItem("lastSearched");
-        // searchCity(lastSearched);
-        // searchFiveDayForcast(lastSearched);
+        searchCity(lastSearched);
+        searchFiveDayForcast(lastSearched);
     }
 
     const searchCityUVIndex = (cityLongitude, cityLatitude) => {
@@ -107,9 +107,12 @@ function WeatherPage(props) {
     }, [])
 
     useEffect(() => {
-        console.log(citiesButtons);
         localStorage.setItem("cities", JSON.stringify(citiesButtons));
     }, [citiesButtons])
+
+    useEffect(() => {
+        localStorage.setItem("lastSearched", lastSearched);
+    }, [lastSearched])
 
     return (
         <div >
