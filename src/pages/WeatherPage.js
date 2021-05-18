@@ -16,14 +16,18 @@ function WeatherPage(props) {
     }]);
     var apiKey = "9533f3cb4c01176c409c57b70db75f3f";
     var cityLatitude, cityLongitude;
-    const [citiesButtons, setCitiesButtons] = useState(() => {
-        const stickyCitiesHistory = localStorage.getItem("cities");
-        return stickyCitiesHistory !== null ? JSON.parse(stickyCitiesHistory) : []
-    });
-    const [lastSearched, setLastSearched] = useState(() => {
-        const stickyLastSearchedCity = localStorage.getItem("lastSearched");
-        return stickyLastSearchedCity !== null ? stickyLastSearchedCity : "San Diego"
-    });
+
+
+    const citiesButtonHistory = localStorage.getItem("cities") !== null ? JSON.parse(localStorage.getItem("cities")) : [];
+    const [citiesButtons, setCitiesButtons] = useState(citiesButtonHistory);
+        // const stickyCitiesHistory = localStorage.getItem("cities");
+        // return stickyCitiesHistory !== null ? JSON.parse(stickyCitiesHistory) : []
+    // });
+    const lastSearchedHistory = localStorage.getItem("lastSearched") !== null ? localStorage.getItem("lastSearched") : "New York";
+    const [lastSearched, setLastSearched] = useState(lastSearchedHistory);
+    //     const stickyLastSearchedCity = localStorage.getItem("lastSearched");
+    //     return stickyLastSearchedCity !== null ? stickyLastSearchedCity : "San Diego"
+    // });
 
     const searchCity = (cityRequest) => {
         var queryUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + cityRequest + "&units=imperial&appid="
