@@ -6,10 +6,11 @@ function SideBar(props) {
     const handleSubmit = (event) => {
         event.preventDefault();
         props.searchCity(cityInput.current.value);
+        cityInput.current.value="";
     }
 
     return (
-        <div>
+        <div >
             <form onSubmit={handleSubmit} style={{ marginLeft: "5px" }}>
                 <label htmlFor="cities-search-input">Search City</label>
                 <div className="row">
@@ -24,7 +25,10 @@ function SideBar(props) {
             </form>
             <div className="cities-buttons-holder">
                 {props.citiesButtons.map(city => (
-                    <button key={city} className="btn btn-primary col-12 mx-auto mt-2 cities-button" onClick={() => props.searchCity(city)}>{city}</button>
+                    <div key={city}>
+                        <button className="btn btn-primary col-7 mt-2" onClick={() => props.searchCity(city)}>{city}</button>
+                        <button onClick={() => props.removeCitySearchHistorySingle(city)} className="btn btn-primary col-3 mt-2" style={{ marginLeft: "5px" }}>Delete</button>
+                    </div>
                 ))}
             </div>
         </div>

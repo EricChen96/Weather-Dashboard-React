@@ -20,14 +20,9 @@ function WeatherPage(props) {
 
     const citiesButtonHistory = localStorage.getItem("cities") !== null ? JSON.parse(localStorage.getItem("cities")) : [];
     const [citiesButtons, setCitiesButtons] = useState(citiesButtonHistory);
-        // const stickyCitiesHistory = localStorage.getItem("cities");
-        // return stickyCitiesHistory !== null ? JSON.parse(stickyCitiesHistory) : []
-    // });
+
     const lastSearchedHistory = localStorage.getItem("lastSearched") !== null ? localStorage.getItem("lastSearched") : "New York";
     const [lastSearched, setLastSearched] = useState(lastSearchedHistory);
-    //     const stickyLastSearchedCity = localStorage.getItem("lastSearched");
-    //     return stickyLastSearchedCity !== null ? stickyLastSearchedCity : "San Diego"
-    // });
 
     const searchCity = (cityRequest) => {
         var queryUrl = "https://api.openweathermap.org/data/2.5/weather?q=" + cityRequest + "&units=imperial&appid="
@@ -60,12 +55,21 @@ function WeatherPage(props) {
         searchFiveDayForcast(lastSearched);
     }
 
+    const removeCitySearchHistorySingle = (city) => {
+        var tempHistoryCopy = [...citiesButtons];
+        var cityIndex = tempHistoryCopy.indexOf(city);
+        if(cityIndex !== -1) {
+            tempHistoryCopy.splice(cityIndex,1);
+            setCitiesButtons(tempHistoryCopy);
+        }
+    }
+
     const searchCityUVIndex = (cityLongitude, cityLatitude) => {
         var IVIndexQueryUrl = "https://api.openweathermap.org/data/2.5/uvi?lat=" + cityLatitude + "&lon=" + cityLongitude + "&units=imperial&appid=" + apiKey;
         fetch(IVIndexQueryUrl)
             .then((res) => res.json())
             .then((data) => {
-                setUVIndex(parseInt(data.value))
+                setUVIndex(parseInt(data.value));
                 setUVColor();
             })
     }
@@ -98,7 +102,7 @@ function WeatherPage(props) {
                     let dailyForcast = {};
                     dailyForcast.date = data.list[dateCount * 8].dt_txt.substring(0, 10);
                     dailyForcast.iconUrl = "https://openweathermap.org/img/wn/" + data.list[dateCount * 8].weather[0].icon + ".png";
-                    dailyForcast.temperature = "Temp: " + data.list[dateCount * 8].main.temp + "°";
+                    dailyForcast.temperature = "Temperature: " + data.list[dateCount * 8].main.temp + "°";
                     dailyForcast.humidity = "Humidity: " + data.list[dateCount * 8].main.humidity + "%";
                     fiveDayForcastHolder.push(dailyForcast);
                 }
@@ -120,12 +124,12 @@ function WeatherPage(props) {
 
     return (
         <div >
-            <TitleBanner></TitleBanner>
             <div className="row">
-                <div className="col-md-4" style={{ backgroundColor: "rgb(238, 232, 232)" }}>
-                    <SideBar searchCity={searchCity} citiesButtons={citiesButtons}></SideBar>
+                <TitleBanner></TitleBanner>
+                <div className="col-md-4" style={{ backgroundColor: "#C5CBE3", borderStyle: "solid" }}>
+                    <SideBar searchCity={searchCity} citiesButtons={citiesButtons} removeCitySearchHistorySingle={removeCitySearchHistorySingle}></SideBar>
                 </div>
-                <div className="col-md-8" style={{ backgroundColor: "#0099ff" }}>
+                <div className="col-md-8" style={{ backgroundColor: "#EFE2BA" }}>
                     {city !== undefined &&
                         <div>
                             <MainWeatherDisplay city={city} date={date} setUVColor={setUVColor} uvIndex={uvIndex}></MainWeatherDisplay>

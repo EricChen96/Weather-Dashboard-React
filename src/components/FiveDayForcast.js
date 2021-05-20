@@ -1,15 +1,14 @@
 function FiveDayForcast(props) {
     return (
-        <div className="row">
+        <div className="row" style={{ borderStyle: "solid" }}>
             <div className="card-body">
-                <h2 className="five-day-forcast-title">5-Day Forcast</h2>
-                <div className="row five-day-forcast-body" style={{ margin: "auto" }}>
+                <div className="row " style={{ margin: "auto" }}>
                     {props.fiveDayForcast.map(dailyForcast => (
-                        <div className="forcast-container" style={{ width: "20%" }} key={dailyForcast.date}>
-                            <div>{dailyForcast.date}</div>
-                            <img src={dailyForcast.iconUrl} alt={dailyForcast.date}></img>
-                            <div>{dailyForcast.temperature}</div>
-                            <div>{dailyForcast.humidity}</div>
+                        <div style={{ width: "20%", textAlign: "center", }} key={dailyForcast.date}>
+                            <div style={{ fontSize: "150%", fontWeight: "bold" }}>{dailyForcast.date}</div>
+                            <img style={{ width: "40%" }} src={dailyForcast.iconUrl} alt={dailyForcast.date}></img>
+                            <div style={{ fontSize: "125%" }}>{dailyForcast.temperature}</div>
+                            <div style={{ fontSize: "125%" }}>{dailyForcast.humidity}</div>
                         </div>
                     ))}
                 </div>
