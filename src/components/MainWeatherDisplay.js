@@ -20,9 +20,9 @@ function MainWeatherDisplay(props) {
                 </div>
 
             </div>
-            <div className="col-md-4">
+            <div className="col-md-4" style={{textAlign:"center"}}>
                 <h2 style={{ fontFamily: "Serif", fontSize: "400%" }}>{props.city.name}</h2>
-                <img alt={props.city.name} style={{ width: "50%", height: "100%", marginTop: "-10%", display: "block", marginLeft: "auto", marginRight: "auto" }} src={`https://openweathermap.org/img/wn/${props.city.weather[0].icon}@2x.png`}></img>
+                <img alt={props.city.name} style={{ width: "50%", height: "75%", marginTop: "-10%", display: "block", marginLeft: "auto", marginRight: "auto" }} src={`https://openweathermap.org/img/wn/${props.city.weather[0].icon}@2x.png`}></img>
             </div>
         </div>
     )

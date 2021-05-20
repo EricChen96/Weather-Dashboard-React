@@ -11,8 +11,8 @@ function SideBar(props) {
 
     return (
         <div >
-            <form onSubmit={handleSubmit} style={{ marginLeft: "5px" }}>
-                <label htmlFor="cities-search-input">Search City</label>
+            <form onSubmit={handleSubmit} style={{ marginLeft: "10%" }}>
+                <label htmlFor="cities-search-input" style={{fontSize:"125%"}}>Search City</label>
                 <div className="row">
                     <div className="col-md-8">
                         <input type="text" ref={cityInput} className="form-control cities-search-input" placeholder="New York, Toronto..." />
@@ -25,7 +25,7 @@ function SideBar(props) {
             </form>
             <div className="cities-buttons-holder">
                 {props.citiesButtons.map(city => (
-                    <div key={city}>
+                    <div key={city} style={{marginLeft:"10%"}}>
                         <button className="btn btn-primary col-7 mt-2" onClick={() => props.searchCity(city)}>{city}</button>
                         <button onClick={() => props.removeCitySearchHistorySingle(city)} className="btn btn-primary col-3 mt-2" style={{ marginLeft: "5px" }}>Delete</button>
                     </div>
